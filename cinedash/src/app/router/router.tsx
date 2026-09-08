@@ -7,6 +7,14 @@ import {
 
 import { RootLayout } from "./root-layout";
 
+import { LoginPage } from "@/pages/login/ui/login-page";
+import { DiscoverPage } from "@/pages/discover/ui/discover-page";
+import { WatchlistPage } from "@/pages/watchlist/ui/watchlist-page";
+import { MovieDetailsPage } from "@/pages/movie-details/ui/movie-details-page";
+
+import { requireAuth } from "@/features/auth/lib/require-auth";
+import { redirectIfAuthenticated } from "@/features/auth/lib/redirect-if-authenticated";
+
 const rootRoute = createRootRoute({
   component: RootLayout,
 });
@@ -17,49 +25,32 @@ const indexRoute = createRoute({
   component: () => <Navigate to="/login" />,
 });
 
-// const loginRoute = createRoute({
-//   getParentRoute: () => rootRoute,
-//   path: "/login",
-//   component: () => <div>Login</div>,
-// });
-
 const loginRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/login",
-  component: () => (
-    <div
-      style={{
-        position: "fixed",
-        top: 0,
-        left: 0,
-        zIndex: 9999,
-        background: "red",
-        color: "white",
-        padding: "40px",
-        fontSize: "40px",
-      }}
-    >
-      TESTE LOGIN
-    </div>
-  ),
+  beforeLoad: redirectIfAuthenticated,
+  component: LoginPage,
 });
 
 const discoverRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/discover",
-  component: () => <div>Discover</div>,
+  beforeLoad: requireAuth,
+  component: DiscoverPage,
 });
 
 const watchlistRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/watchlist",
-  component: () => <div>Watchlist</div>,
+  beforeLoad: requireAuth,
+  component: WatchlistPage,
 });
 
 const movieDetailsRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/movie/$movieId",
-  component: () => <div>Movie Details</div>,
+  beforeLoad: requireAuth,
+  component: MovieDetailsPage,
 });
 
 const routeTree = rootRoute.addChildren([
