@@ -1,27 +1,15 @@
-import { useNavigate } from "@tanstack/react-router";
-
-import { Button } from "@/components/ui/button";
-import { useAuthStore } from "@/features/auth/model/auth.store";
+import { AppShell } from "@/widgets/app-shell/app-shell";
 
 export function DiscoverPage() {
-  const logout = useAuthStore((state) => state.logout);
-  const navigate = useNavigate();
-
-  function handleLogout() {
-    logout();
-
-    navigate({
-      to: "/login",
-    });
-  }
-
   return (
-    <main className="p-6">
-      <h1 className="text-2xl font-bold">Discover</h1>
+    <AppShell>
+      <div className="space-y-2">
+        <h1 className="text-3xl font-bold">Discover</h1>
 
-      <Button className="mt-4" variant="outline" onClick={handleLogout}>
-        Sair
-      </Button>
-    </main>
+        <p className="text-muted-foreground">
+          Explore filmes populares e encontre o que assistir.
+        </p>
+      </div>
+    </AppShell>
   );
 }
