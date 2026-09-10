@@ -5,6 +5,8 @@ import {
   Navigate,
 } from "@tanstack/react-router";
 
+import { z } from "zod";
+
 import { RootLayout } from "./root-layout";
 
 import { LoginPage } from "@/pages/login/ui/login-page";
@@ -32,9 +34,16 @@ const loginRoute = createRoute({
   component: LoginPage,
 });
 
+const discoverSearchSchema = z.object({
+  genre: z.coerce.number().optional(),
+  year: z.coerce.number().optional(),
+  rating: z.coerce.number().optional(),
+});
+
 const discoverRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/discover",
+  validateSearch: discoverSearchSchema,
   beforeLoad: requireAuth,
   component: DiscoverPage,
 });

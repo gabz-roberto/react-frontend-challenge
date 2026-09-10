@@ -1,3 +1,5 @@
+import type { MovieFilters } from "@/features/movie-filters/model/movie-filters.types";
+
 export const movieKeys = {
   all: ["movies"] as const,
 
@@ -11,4 +13,7 @@ export const movieKeys = {
   details: () => [...movieKeys.all, "detail"] as const,
 
   detail: (id: number) => [...movieKeys.details(), id] as const,
+
+  discover: (filters: MovieFilters, page: number) =>
+    [...movieKeys.lists(), "discover", filters, page] as const,
 };
