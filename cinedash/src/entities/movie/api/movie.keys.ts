@@ -5,6 +5,9 @@ export const movieKeys = {
 
   popular: (page: number) => [...movieKeys.lists(), "popular", page] as const,
 
+  search: (query: string, page: number) =>
+    [...movieKeys.lists(), "search", query, page] as const,
+
   details: () => [...movieKeys.all, "detail"] as const,
 
   detail: (id: number) => [...movieKeys.details(), id] as const,
