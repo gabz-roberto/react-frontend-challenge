@@ -1,14 +1,18 @@
 const TMDB_IMAGE_BASE_URL = "https://image.tmdb.org/t/p";
 
-type PosterSize = "w342" | "w500" | "w780";
+type ImageSize = "w185" | "w342" | "w500" | "w780" | "w1280" | "original";
 
-export function getTmdbPosterUrl(
-  posterPath: string | null,
-  size: PosterSize = "w500",
-) {
-  if (!posterPath) {
+export function getTmdbImageUrl(path: string | null, size: ImageSize = "w500") {
+  if (!path) {
     return null;
   }
 
-  return `${TMDB_IMAGE_BASE_URL}/${size}${posterPath}`;
+  return `${TMDB_IMAGE_BASE_URL}/${size}${path}`;
+}
+
+export function getTmdbPosterUrl(
+  posterPath: string | null,
+  size: ImageSize = "w500",
+) {
+  return getTmdbImageUrl(posterPath, size);
 }

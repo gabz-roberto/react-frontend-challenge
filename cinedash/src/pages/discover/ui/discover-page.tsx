@@ -9,6 +9,7 @@ import { usePopularMovies } from "@/entities/movie/api/use-popular-movies";
 import { useSearchMovies } from "@/entities/movie/api/use-search-movies";
 
 import { MovieFilters } from "@/features/movie-filters/ui/movie-filters";
+import { MoviePagination } from "@/features/movie-pagination/ui/movie-pagination";
 import { MovieSearchInput } from "@/features/movie-search/ui/movie-search-input";
 
 import { useDebounce } from "@/shared/hooks/use-debounce";
@@ -24,6 +25,8 @@ export function DiscoverPage() {
 
   const searchParams = discoverRoute.useSearch();
   const navigate = discoverRoute.useNavigate();
+
+  const page = searchParams.page ?? 1;
 
   const debouncedSearch = useDebounce(search.trim(), 500);
 
@@ -42,14 +45,16 @@ export function DiscoverPage() {
 
   const genresQuery = useGenres();
 
-  const popularQuery = usePopularMovies();
+  const popularQuery = usePopularMovies(page);
 
   const discoverQuery = useDiscoverMovies({
     filters,
+    page,
   });
 
   const searchQuery = useSearchMovies({
     query: debouncedSearch,
+    page,
   });
 
   const activeQuery = isSearching
@@ -58,7 +63,7 @@ export function DiscoverPage() {
       ? discoverQuery
       : popularQuery;
 
-  const { data, isLoading, isError, error, refetch } = activeQuery;
+  const { data, isLoading, isError, error, refetch, isFetching } = activeQuery;
 
   return (
     <AppShell>
@@ -72,7 +77,19 @@ export function DiscoverPage() {
         </div>
 
         <div className="space-y-4">
-          <MovieSearchInput value={search} onChange={setSearch} />
+          <MovieSearchInput
+            value={search}
+            onChange={(value) => {
+              setSearch(value);
+
+              navigate({
+                search: (previous) => ({
+                  ...previous,
+                  page: undefined,
+                }),
+              });
+            }}
+          />
 
           <MovieFilters
             filters={filters}
@@ -82,6 +99,7 @@ export function DiscoverPage() {
                 search: (previous) => ({
                   ...previous,
                   genre,
+                  page: undefined,
                 }),
               })
             }
@@ -90,6 +108,7 @@ export function DiscoverPage() {
                 search: (previous) => ({
                   ...previous,
                   year,
+                  page: undefined,
                 }),
               })
             }
@@ -98,6 +117,7 @@ export function DiscoverPage() {
                 search: (previous) => ({
                   ...previous,
                   rating,
+                  page: undefined,
                 }),
               })
             }
@@ -144,7 +164,23 @@ export function DiscoverPage() {
             )}
 
             {data.results.length > 0 ? (
-              <MovieGrid movies={data.results} />
+              <>
+                <MovieGrid movies={data.results} />
+
+                <MoviePagination
+                  page={page}
+                  totalPages={data.totalPages}
+                  disabled={isFetching}
+                  onPageChange={(newPage: number) =>
+                    navigate({
+                      search: (previous) => ({
+                        ...previous,
+                        page: newPage === 1 ? undefined : newPage,
+                      }),
+                    })
+                  }
+                />
+              </>
             ) : (
               <div className="rounded-lg border p-8 text-center">
                 <p className="font-medium">Nenhum filme encontrado</p>

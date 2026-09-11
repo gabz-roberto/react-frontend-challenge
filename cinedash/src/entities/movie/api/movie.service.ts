@@ -1,10 +1,12 @@
+import type { MovieFilters } from "@/features/movie-filters/model/movie-filters.types";
 import { tmdbClient } from "@/shared/api/tmdb-client";
 
 import { mapMovie } from "../lib/map-movie";
-import type { PaginatedMovies } from "../model/movie.types";
-import type { MoviesResponseDto } from "./movie.dto";
+import { mapMovieDetails } from "../lib/map-movie-details";
 
-import type { MovieFilters } from "@/features/movie-filters/model/movie-filters.types";
+import type { MovieDetails, PaginatedMovies } from "../model/movie.types";
+
+import type { MovieDetailsDto, MoviesResponseDto } from "./movie.dto";
 
 interface GetPopularMoviesParams {
   page?: number;
@@ -20,6 +22,11 @@ interface SearchMoviesParams {
 interface DiscoverMoviesParams {
   filters: MovieFilters;
   page?: number;
+  signal?: AbortSignal;
+}
+
+interface GetMovieDetailsParams {
+  movieId: number;
   signal?: AbortSignal;
 }
 
@@ -100,4 +107,16 @@ export async function discoverMovies({
     totalPages: response.total_pages,
     totalResults: response.total_results,
   };
+}
+
+export async function getMovieDetails({
+  movieId,
+  signal,
+}: GetMovieDetailsParams): Promise<MovieDetails> {
+  const response = await tmdbClient<MovieDetailsDto>(
+    `/movie/${movieId}?language=pt-BR&append_to_response=credits,videos`,
+    { signal },
+  );
+
+  return mapMovieDetails(response);
 }

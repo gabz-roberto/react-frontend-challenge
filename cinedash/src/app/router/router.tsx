@@ -38,6 +38,7 @@ const discoverSearchSchema = z.object({
   genre: z.coerce.number().optional(),
   year: z.coerce.number().optional(),
   rating: z.coerce.number().optional(),
+  page: z.coerce.number().int().positive().optional(),
 });
 
 const discoverRoute = createRoute({
