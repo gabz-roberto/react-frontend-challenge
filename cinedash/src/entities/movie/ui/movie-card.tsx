@@ -1,7 +1,12 @@
 import { Link } from "@tanstack/react-router";
+import { useQueryClient } from "@tanstack/react-query";
 import { Star } from "lucide-react";
 
 import type { Movie } from "../model/movie.types";
+
+import { getMovieDetails } from "@/entities/movie/api/movie.service";
+import { movieKeys } from "@/entities/movie/api/movie.keys";
+
 import { getTmdbPosterUrl } from "@/shared/lib/tmdb-image";
 
 interface MovieCardProps {
@@ -9,11 +14,25 @@ interface MovieCardProps {
 }
 
 export function MovieCard({ movie }: MovieCardProps) {
+  const queryClient = useQueryClient();
+
   const posterUrl = getTmdbPosterUrl(movie.posterPath);
 
   const releaseYear = movie.releaseDate
     ? new Date(movie.releaseDate).getFullYear()
     : "N/A";
+
+  function prefetchMovieDetails() {
+    void queryClient.prefetchQuery({
+      queryKey: movieKeys.detail(movie.id),
+      queryFn: ({ signal }) =>
+        getMovieDetails({
+          movieId: movie.id,
+          signal,
+        }),
+      staleTime: 1000 * 60 * 5,
+    });
+  }
 
   return (
     <Link
@@ -21,6 +40,8 @@ export function MovieCard({ movie }: MovieCardProps) {
       params={{
         movieId: String(movie.id),
       }}
+      onMouseEnter={prefetchMovieDetails}
+      onFocus={prefetchMovieDetails}
       className="group overflow-hidden rounded-xl border bg-card transition hover:-translate-y-1 hover:shadow-lg"
     >
       <div className="aspect-[2/3] overflow-hidden bg-muted">

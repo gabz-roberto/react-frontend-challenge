@@ -2,23 +2,25 @@ import {
   createRootRoute,
   createRoute,
   createRouter,
+  lazyRouteComponent,
   Navigate,
 } from "@tanstack/react-router";
 
 import { z } from "zod";
 
 import { RootLayout } from "./root-layout";
-
-import { LoginPage } from "@/pages/login/ui/login-page";
-import { DiscoverPage } from "@/pages/discover/ui/discover-page";
-import { WatchlistPage } from "@/pages/watchlist/ui/watchlist-page";
-import { MovieDetailsPage } from "@/pages/movie-details/ui/movie-details-page";
+import { RouterError } from "./router-error";
+import { NotFoundPage } from "./not-found-page";
 
 import { requireAuth } from "@/features/auth/lib/require-auth";
 import { redirectIfAuthenticated } from "@/features/auth/lib/redirect-if-authenticated";
 
 const rootRoute = createRootRoute({
   component: RootLayout,
+  errorComponent: ({ error, reset }) => (
+    <RouterError error={error} reset={reset} />
+  ),
+  notFoundComponent: NotFoundPage,
 });
 
 const indexRoute = createRoute({
@@ -31,7 +33,10 @@ const loginRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/login",
   beforeLoad: redirectIfAuthenticated,
-  component: LoginPage,
+  component: lazyRouteComponent(
+    () => import("@/pages/login/ui/login-page"),
+    "LoginPage",
+  ),
 });
 
 const discoverSearchSchema = z.object({
@@ -46,21 +51,30 @@ const discoverRoute = createRoute({
   path: "/discover",
   validateSearch: discoverSearchSchema,
   beforeLoad: requireAuth,
-  component: DiscoverPage,
+  component: lazyRouteComponent(
+    () => import("@/pages/discover/ui/discover-page"),
+    "DiscoverPage",
+  ),
 });
 
 const watchlistRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/watchlist",
   beforeLoad: requireAuth,
-  component: WatchlistPage,
+  component: lazyRouteComponent(
+    () => import("@/pages/watchlist/ui/watchlist-page"),
+    "WatchlistPage",
+  ),
 });
 
 const movieDetailsRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/movie/$movieId",
   beforeLoad: requireAuth,
-  component: MovieDetailsPage,
+  component: lazyRouteComponent(
+    () => import("@/pages/movie-details/ui/movie-details-page"),
+    "MovieDetailsPage",
+  ),
 });
 
 const routeTree = rootRoute.addChildren([
@@ -73,6 +87,7 @@ const routeTree = rootRoute.addChildren([
 
 export const router = createRouter({
   routeTree,
+  defaultPreload: "intent",
 });
 
 declare module "@tanstack/react-router" {
