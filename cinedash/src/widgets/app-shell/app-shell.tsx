@@ -4,6 +4,8 @@ import { Link, useNavigate } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 import { useAuthStore } from "@/features/auth/model/auth.store";
 
+import { ThemeToggle } from "@/features/theme/ui/theme-toggle";
+
 export function AppShell({ children }: PropsWithChildren) {
   const logout = useAuthStore((state) => state.logout);
   const navigate = useNavigate();
@@ -33,7 +35,7 @@ export function AppShell({ children }: PropsWithChildren) {
                   className: "text-sm font-medium text-foreground",
                 }}
               >
-                Discover
+                Explore
               </Link>
 
               <Link
@@ -43,14 +45,18 @@ export function AppShell({ children }: PropsWithChildren) {
                   className: "text-sm font-medium text-foreground",
                 }}
               >
-                Watchlist
+                Favoritos
               </Link>
             </nav>
           </div>
 
-          <Button variant="outline" onClick={handleLogout}>
-            Sair
-          </Button>
+          <div className="flex items-center gap-2">
+            <ThemeToggle />
+
+            <Button variant="outline" onClick={handleLogout}>
+              Sair
+            </Button>
+          </div>
         </div>
       </header>
 

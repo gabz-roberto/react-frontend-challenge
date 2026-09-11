@@ -11,6 +11,7 @@ import { useAuthStore } from "../model/auth.store";
 
 export function LoginForm() {
   const login = useAuthStore((state) => state.login);
+
   const navigate = useNavigate();
 
   const {
@@ -31,6 +32,7 @@ export function LoginForm() {
 
   return (
     <form
+      noValidate
       onSubmit={handleSubmit(onSubmit)}
       className="flex w-full max-w-sm flex-col gap-4"
     >

@@ -69,7 +69,7 @@ export function DiscoverPage() {
     <AppShell>
       <div className="space-y-8">
         <div className="space-y-2">
-          <h1 className="text-3xl font-bold">Discover</h1>
+          <h1 className="text-3xl font-bold">Explore</h1>
 
           <p className="text-muted-foreground">
             Explore os filmes populares do momento.

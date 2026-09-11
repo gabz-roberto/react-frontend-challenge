@@ -36,7 +36,7 @@ export function WatchlistPage() {
           </div>
 
           <div className="space-y-2">
-            <h1 className="text-2xl font-semibold">Sua Watchlist está vazia</h1>
+            <h1 className="text-2xl font-semibold">Sua lista está vazia</h1>
 
             <p className="max-w-md text-muted-foreground">
               Explore os filmes e adicione os títulos que você deseja assistir.
