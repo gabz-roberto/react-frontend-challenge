@@ -61,3 +61,5 @@ src/
     ├── app-shell/
     └── movie-grid/
 ```
+
+> **P.S.:** A aplicação foi construída com carinho, código, café e muito punk rock tocando ao fundo

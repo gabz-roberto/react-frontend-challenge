@@ -34,14 +34,14 @@ export function MovieFilters({
   onClear,
 }: MovieFiltersProps) {
   return (
-    <div className="flex flex-col gap-3 md:flex-row">
+    <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr_auto]">
       <Select
         value={filters.genre?.toString() ?? "all"}
         onValueChange={(value) =>
           onGenreChange(value === "all" ? undefined : Number(value))
         }
       >
-        <SelectTrigger className="w-full md:w-48">
+        <SelectTrigger className="w-full">
           <SelectValue placeholder="Gênero">
             {filters.genre
               ? genres.find((genre) => genre.id === filters.genre)?.name
@@ -66,7 +66,7 @@ export function MovieFilters({
           onYearChange(value === "all" ? undefined : Number(value))
         }
       >
-        <SelectTrigger className="w-full md:w-40">
+        <SelectTrigger className="w-full">
           <SelectValue placeholder="Ano">
             {filters.year ? String(filters.year) : "Ano"}
           </SelectValue>
@@ -89,7 +89,7 @@ export function MovieFilters({
           onRatingChange(value === "all" ? undefined : Number(value))
         }
       >
-        <SelectTrigger className="w-full md:w-44">
+        <SelectTrigger className="w-full">
           <SelectValue placeholder="Nota mínima">
             {filters.minRating !== undefined
               ? `${filters.minRating}+`
@@ -108,8 +108,13 @@ export function MovieFilters({
         </SelectContent>
       </Select>
 
-      <Button type="button" variant="default" onClick={onClear}>
-        Limpar Filtros
+      <Button
+        type="button"
+        variant="secondary"
+        onClick={onClear}
+        className="w-full lg:w-auto"
+      >
+        Limpar filtros
       </Button>
     </div>
   );

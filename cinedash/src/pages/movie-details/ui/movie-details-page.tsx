@@ -62,14 +62,18 @@ export function MovieDetailsPage() {
             Voltar
           </Link>
 
-          <div className="rounded-xl border p-8">
-            <div className="space-y-4">
-              <div>
-                <h1 className="text-xl font-semibold">
+          <div className="border-2 border-destructive bg-card p-6 shadow-[5px_5px_0_var(--destructive)] sm:p-8">
+            <div className="space-y-5">
+              <div className="space-y-2">
+                <span className="inline-flex border-2 border-foreground bg-destructive px-2 py-1 text-xs font-black uppercase tracking-[0.08em] text-white">
+                  Erro
+                </span>
+
+                <h1 className="text-xl font-black uppercase tracking-[-0.03em]">
                   Não foi possível carregar o filme
                 </h1>
 
-                <p className="mt-1 text-sm text-muted-foreground">
+                <p className="text-sm font-medium text-muted-foreground">
                   {error.message}
                 </p>
               </div>
@@ -120,7 +124,7 @@ export function MovieDetailsPage() {
 
   return (
     <AppShell>
-      <div className="space-y-8">
+      <div className="space-y-10">
         <Link
           to="/discover"
           className={buttonVariants({
@@ -132,57 +136,62 @@ export function MovieDetailsPage() {
         </Link>
 
         {backdropUrl && (
-          <div className="relative overflow-hidden rounded-xl">
+          <section className="relative overflow-hidden border-2 border-foreground bg-muted shadow-[6px_6px_0_var(--foreground)]">
             <img
               src={backdropUrl}
               alt=""
-              className="h-70 w-full object-cover md:h-105"
+              className="h-64 w-full object-cover sm:h-80 md:h-105"
             />
 
-            <div className="absolute inset-0 bg-linear-to-t from-background via-background/20 to-transparent" />
-          </div>
+            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+
+            <div className="absolute bottom-4 left-4 flex flex-wrap gap-2 sm:bottom-6 sm:left-6">
+              {releaseYear && (
+                <span className="border-2 border-foreground bg-secondary px-3 py-1.5 text-xs font-black uppercase tracking-[0.08em] text-secondary-foreground shadow-[2px_2px_0_#111]">
+                  {releaseYear}
+                </span>
+              )}
+
+              {currentMovie.runtime && (
+                <span className="flex items-center gap-1.5 border-2 border-foreground bg-card px-3 py-1.5 text-xs font-black uppercase tracking-[0.06em] text-card-foreground shadow-[2px_2px_0_#111]">
+                  <Clock className="size-3.5" />
+                  {currentMovie.runtime} min
+                </span>
+              )}
+
+              <span className="flex items-center gap-1.5 border-2 border-foreground bg-primary px-3 py-1.5 text-xs font-black text-primary-foreground shadow-[2px_2px_0_#111]">
+                <Star className="size-3.5 fill-current" />
+                {currentMovie.rating > 0
+                  ? currentMovie.rating.toFixed(1)
+                  : "N/A"}
+              </span>
+            </div>
+          </section>
         )}
 
-        <div className="grid gap-8 md:grid-cols-[240px_1fr]">
-          <div>
+        <section className="grid gap-8 lg:grid-cols-[260px_1fr] lg:items-start">
+          <div className="lg:sticky lg:top-6">
             {posterUrl ? (
               <img
                 src={posterUrl}
                 alt={`Poster de ${currentMovie.title}`}
-                className="w-full rounded-xl object-cover shadow-lg"
+                className="w-full border-2 border-foreground object-cover shadow-[6px_6px_0_var(--foreground)]"
               />
             ) : (
-              <div className="flex aspect-2/3 items-center justify-center rounded-xl bg-muted text-sm text-muted-foreground">
+              <div className="flex aspect-[2/3] items-center justify-center border-2 border-foreground bg-muted p-6 text-center text-sm font-bold uppercase tracking-[0.06em] text-muted-foreground shadow-[6px_6px_0_var(--foreground)]">
                 Sem poster
               </div>
             )}
           </div>
 
-          <div className="space-y-6">
-            <div className="space-y-3">
-              <div>
-                <h1 className="text-3xl font-bold tracking-tight md:text-4xl">
+          <div className="space-y-8">
+            <div className="space-y-5 border-b-2 border-foreground pb-8">
+              <div className="space-y-3">
+                <span className="neo-label">Ficha do filme</span>
+
+                <h1 className="neo-title max-w-4xl text-4xl sm:text-5xl md:text-6xl">
                   {currentMovie.title}
                 </h1>
-
-                <div className="mt-2 flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
-                  {releaseYear && <span>{releaseYear}</span>}
-
-                  {currentMovie.runtime && (
-                    <span className="flex items-center gap-1">
-                      <Clock className="size-4" />
-                      {currentMovie.runtime} min
-                    </span>
-                  )}
-
-                  <span className="flex items-center gap-1">
-                    <Star className="size-4" />
-
-                    {currentMovie.rating > 0
-                      ? currentMovie.rating.toFixed(1)
-                      : "N/A"}
-                  </span>
-                </div>
               </div>
 
               <Button
@@ -203,55 +212,77 @@ export function MovieDetailsPage() {
                 )}
               </Button>
 
-              <div className="flex flex-wrap gap-2">
-                {currentMovie.genres.map((genre) => (
-                  <span
-                    key={genre.id}
-                    className="rounded-full border px-3 py-1 text-xs"
-                  >
-                    {genre.name}
-                  </span>
-                ))}
+              {currentMovie.genres.length > 0 && (
+                <div className="flex flex-wrap gap-2">
+                  {currentMovie.genres.map((genre) => (
+                    <span
+                      key={genre.id}
+                      className="border-2 border-foreground bg-accent px-3 py-1.5 text-xs font-black uppercase tracking-[0.05em] text-accent-foreground shadow-[2px_2px_0_var(--foreground)]"
+                    >
+                      {genre.name}
+                    </span>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <section className="space-y-3">
+              <div className="flex items-center gap-3">
+                <div className="h-6 w-2 bg-primary" />
+
+                <h2 className="text-2xl font-black uppercase tracking-[-0.03em]">
+                  Sinopse
+                </h2>
               </div>
-            </div>
 
-            <div className="space-y-2">
-              <h2 className="text-xl font-semibold">Sinopse</h2>
-
-              <p className="leading-7 text-muted-foreground">
-                {currentMovie.overview || "Sinopse não disponível."}
-              </p>
-            </div>
+              <div className="border-2 border-foreground bg-card p-5 shadow-[4px_4px_0_var(--foreground)] sm:p-6">
+                <p className="max-w-4xl text-base font-medium leading-7 text-muted-foreground">
+                  {currentMovie.overview || "Sinopse não disponível."}
+                </p>
+              </div>
+            </section>
           </div>
-        </div>
+        </section>
 
         {currentMovie.cast.length > 0 && (
-          <section className="space-y-4">
-            <h2 className="text-2xl font-semibold">Elenco principal</h2>
+          <section className="space-y-6 border-t-2 border-foreground pt-8">
+            <div className="space-y-2">
+              <span className="text-xs font-black uppercase tracking-[0.12em] text-muted-foreground">
+                Créditos
+              </span>
 
-            <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-10">
+              <h2 className="text-3xl font-black uppercase tracking-[-0.04em]">
+                Elenco principal
+              </h2>
+            </div>
+
+            <div className="grid grid-cols-2 gap-x-4 gap-y-6 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-10">
               {currentMovie.cast.map((person) => {
                 const profileUrl = getTmdbImageUrl(person.profilePath, "w185");
 
                 return (
-                  <div key={person.id} className="space-y-2">
-                    {profileUrl ? (
-                      <img
-                        src={profileUrl}
-                        alt={person.name}
-                        loading="lazy"
-                        className="aspect-2/3 w-full rounded-lg object-cover"
-                      />
-                    ) : (
-                      <div className="flex aspect-2/3 items-center justify-center rounded-lg bg-muted px-2 text-center text-xs text-muted-foreground">
-                        Sem foto
-                      </div>
-                    )}
+                  <div key={person.id} className="space-y-3">
+                    <div className="overflow-hidden border-2 border-foreground bg-muted shadow-[3px_3px_0_var(--foreground)]">
+                      {profileUrl ? (
+                        <img
+                          src={profileUrl}
+                          alt={person.name}
+                          loading="lazy"
+                          className="aspect-[2/3] w-full object-cover"
+                        />
+                      ) : (
+                        <div className="flex aspect-[2/3] items-center justify-center px-2 text-center text-xs font-bold uppercase tracking-[0.05em] text-muted-foreground">
+                          Sem foto
+                        </div>
+                      )}
+                    </div>
 
                     <div>
-                      <p className="text-sm font-medium">{person.name}</p>
+                      <p className="line-clamp-2 text-sm font-black uppercase leading-tight">
+                        {person.name}
+                      </p>
 
-                      <p className="text-xs text-muted-foreground">
+                      <p className="mt-1 line-clamp-2 text-xs font-medium text-muted-foreground">
                         {person.character}
                       </p>
                     </div>
@@ -263,10 +294,18 @@ export function MovieDetailsPage() {
         )}
 
         {currentMovie.trailer && (
-          <section className="space-y-4">
-            <h2 className="text-2xl font-semibold">Trailer</h2>
+          <section className="space-y-6 border-t-2 border-foreground pt-8">
+            <div className="space-y-2">
+              <span className="text-xs font-black uppercase tracking-[0.12em] text-muted-foreground">
+                Vídeo
+              </span>
 
-            <div className="aspect-video overflow-hidden rounded-xl">
+              <h2 className="text-3xl font-black uppercase tracking-[-0.04em]">
+                Trailer
+              </h2>
+            </div>
+
+            <div className="aspect-video overflow-hidden border-2 border-foreground bg-black shadow-[6px_6px_0_var(--foreground)]">
               <iframe
                 src={`https://www.youtube.com/embed/${currentMovie.trailer.key}`}
                 title={currentMovie.trailer.name}

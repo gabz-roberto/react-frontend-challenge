@@ -1,6 +1,6 @@
 import type { ColumnDef } from "@tanstack/react-table";
 import { Link } from "@tanstack/react-router";
-import { ArrowUpDown, Trash2 } from "lucide-react";
+import { ArrowUpDown, Star, Trash2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 
@@ -26,10 +26,12 @@ export function createWatchlistColumns({
         <Button
           type="button"
           variant="ghost"
+          size="sm"
           onClick={column.getToggleSortingHandler()}
+          className="-ml-2 border-0 px-2 shadow-none hover:translate-x-0 hover:translate-y-0 hover:bg-primary hover:shadow-none active:translate-x-0 active:translate-y-0 active:shadow-none"
         >
           Título
-          <ArrowUpDown className="size-4" />
+          <ArrowUpDown className="size-4 stroke-[2.5]" />
         </Button>
       ),
 
@@ -39,25 +41,27 @@ export function createWatchlistColumns({
         const posterUrl = getTmdbImageUrl(movie.posterPath, "w185");
 
         return (
-          <div className="flex items-center gap-3">
-            {posterUrl ? (
-              <img
-                src={posterUrl}
-                alt={`Poster de ${movie.title}`}
-                className="h-16 w-11 rounded object-cover"
-              />
-            ) : (
-              <div className="flex h-16 w-11 items-center justify-center rounded bg-muted text-[10px] text-muted-foreground">
-                Sem poster
-              </div>
-            )}
+          <div className="flex min-w-56 items-center gap-4">
+            <div className="shrink-0 border-2 border-foreground bg-muted shadow-[2px_2px_0_var(--foreground)]">
+              {posterUrl ? (
+                <img
+                  src={posterUrl}
+                  alt={`Poster de ${movie.title}`}
+                  className="h-20 w-14 object-cover"
+                />
+              ) : (
+                <div className="flex h-20 w-14 items-center justify-center px-1 text-center text-[9px] font-black uppercase leading-tight text-muted-foreground">
+                  Sem poster
+                </div>
+              )}
+            </div>
 
             <Link
               to="/movie/$movieId"
               params={{
                 movieId: String(movie.id),
               }}
-              className="font-medium hover:underline"
+              className="max-w-56 font-black uppercase leading-tight tracking-[-0.02em] underline-offset-4 hover:underline"
             >
               {movie.title}
             </Link>
@@ -75,20 +79,39 @@ export function createWatchlistColumns({
         <Button
           type="button"
           variant="ghost"
+          size="sm"
           onClick={column.getToggleSortingHandler()}
+          className="-ml-2 border-0 px-2 shadow-none hover:translate-x-0 hover:translate-y-0 hover:bg-primary hover:shadow-none active:translate-x-0 active:translate-y-0 active:shadow-none"
         >
           Gênero
-          <ArrowUpDown className="size-4" />
+          <ArrowUpDown className="size-4 stroke-[2.5]" />
         </Button>
       ),
 
-      cell: ({ row }) => (
-        <span className="text-sm text-muted-foreground">
-          {row.original.genres.length > 0
-            ? row.original.genres.join(", ")
-            : "Não informado"}
-        </span>
-      ),
+      cell: ({ row }) => {
+        const genres = row.original.genres;
+
+        if (genres.length === 0) {
+          return (
+            <span className="text-sm font-medium text-muted-foreground">
+              Não informado
+            </span>
+          );
+        }
+
+        return (
+          <div className="flex min-w-44 flex-wrap gap-1.5">
+            {genres.map((genre) => (
+              <span
+                key={genre}
+                className="border-2 border-foreground bg-accent px-2 py-1 text-[10px] font-black uppercase tracking-[0.04em] text-accent-foreground"
+              >
+                {genre}
+              </span>
+            ))}
+          </div>
+        );
+      },
     },
 
     {
@@ -100,11 +123,19 @@ export function createWatchlistColumns({
         const releaseDate = row.original.releaseDate;
 
         if (!releaseDate) {
-          return <span className="text-muted-foreground">Não informado</span>;
+          return (
+            <span className="text-sm font-medium text-muted-foreground">
+              Não informado
+            </span>
+          );
         }
 
-        return new Intl.DateTimeFormat("pt-BR").format(
-          new Date(`${releaseDate}T00:00:00`),
+        return (
+          <span className="whitespace-nowrap text-sm font-bold">
+            {new Intl.DateTimeFormat("pt-BR").format(
+              new Date(`${releaseDate}T00:00:00`),
+            )}
+          </span>
         );
       },
     },
@@ -116,17 +147,25 @@ export function createWatchlistColumns({
         <Button
           type="button"
           variant="ghost"
+          size="sm"
           onClick={column.getToggleSortingHandler()}
+          className="-ml-2 border-0 px-2 shadow-none hover:translate-x-0 hover:translate-y-0 hover:bg-primary hover:shadow-none active:translate-x-0 active:translate-y-0 active:shadow-none"
         >
           Nota
-          <ArrowUpDown className="size-4" />
+          <ArrowUpDown className="size-4 stroke-[2.5]" />
         </Button>
       ),
 
       cell: ({ row }) => {
         const rating = row.original.rating;
 
-        return <span>{rating > 0 ? rating.toFixed(1) : "N/A"}</span>;
+        return (
+          <span className="inline-flex items-center gap-1.5 border-2 border-foreground bg-primary px-2 py-1 text-xs font-black text-primary-foreground shadow-[2px_2px_0_var(--foreground)]">
+            <Star className="size-3.5 fill-current" />
+
+            {rating > 0 ? rating.toFixed(1) : "N/A"}
+          </span>
+        );
       },
     },
 
@@ -144,8 +183,8 @@ export function createWatchlistColumns({
           <div className="flex justify-end">
             <Button
               type="button"
-              variant="ghost"
-              size="icon"
+              variant="destructive"
+              size="icon-sm"
               aria-label={`Remover ${movie.title} da Watchlist`}
               onClick={() => onRemove(movie.id)}
             >
